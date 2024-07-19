@@ -14,7 +14,6 @@ describe('LandRegistry', function () {
 
     LandRegistry = await ethers.getContractFactory('LandRegistry')
     landRegistry = await LandRegistry.deploy()
-    await landRegistry.deployed()
   })
 
   it('Should register a user', async function () {
