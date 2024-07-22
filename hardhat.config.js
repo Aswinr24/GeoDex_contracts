@@ -15,5 +15,9 @@ module.exports = {
       url: `https://eth-sepolia.g.alchemy.com/v2/${API_KEY}`,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    zkEVMTestnet: {
+      url: `https://rpc.cardona.zkevm-rpc.com`,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
   },
 }
