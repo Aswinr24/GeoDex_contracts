@@ -3,15 +3,15 @@ async function main() {
 
   console.log('Deploying contracts with the account:', deployer.address)
 
-  // const LandRegistry = await ethers.getContractFactory('LandRegistry')
-  // const landRegistry = await LandRegistry.deploy()
+  const LandRegistry = await ethers.getContractFactory('LandRegistry')
+  const landRegistry = await LandRegistry.deploy()
 
-  // console.log(
-  //   'LandRegistry contract deployed to:',
-  //   await landRegistry.getAddress()
-  // )
+  console.log(
+    'LandRegistry contract deployed to:',
+    await landRegistry.getAddress()
+  )
 
-  const LandNFT = await ethers.getContractFactory('Land_NFT')
+  const LandNFT = await ethers.getContractFactory('LandNFT')
   const landNFT = await LandNFT.deploy()
 
   console.log('LandNFT contract deployed to:', await landNFT.getAddress())

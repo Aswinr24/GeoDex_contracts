@@ -8,7 +8,7 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 module.exports = {
   solidity: '0.8.20',
-  defaultNetwork: 'sepolia',
+  defaultNetwork: 'zkEVMTestnet',
   networks: {
     hardhat: {},
     sepolia: {
@@ -16,7 +16,7 @@ module.exports = {
       accounts: [`0x${PRIVATE_KEY}`],
     },
     zkEVMTestnet: {
-      url: `https://rpc.cardona.zkevm-rpc.com`,
+      url: `https://polygonzkevm-cardona.g.alchemy.com/v2/${API_KEY}`,
       accounts: [`0x${PRIVATE_KEY}`],
     },
   },
