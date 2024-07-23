@@ -44,8 +44,8 @@ contract LandRegistry is ReentrancyGuard {
     mapping(address => GovtAuthority) public govtAuthorities;
     mapping(uint256 => address) private landToBuyer;
     mapping(uint256 => string) private landTransactionProofs;
-    mapping(uint256 => uint256) private _landToSaleId; // Maps land ID to sale ID
-    mapping(uint256 => bool) private _approvedSales; // Tracks approved sales
+    mapping(uint256 => uint256) private _landToSaleId; 
+    mapping(uint256 => bool) private _approvedSales; 
 
     event LandRegistered(uint256 indexed landId, address indexed owner);
     event UserRegistered(uint256 indexed userId, address indexed accountAddress);
@@ -70,12 +70,7 @@ contract LandRegistry is ReentrancyGuard {
         _;
     }
 
-    function registerUser(
-        string memory name,
-        string memory details, 
-        string memory phoneNumber,
-        string memory email
-    ) public {
+    function registerUser(string memory name, string memory details, string memory phoneNumber, string memory email) public {
         require(userAddressToId[msg.sender] == 0, "User already registered");
         _userIdCounter++;
         uint256 newUserId = _userIdCounter;
@@ -85,12 +80,7 @@ contract LandRegistry is ReentrancyGuard {
         emit UserRegistered(newUserId, msg.sender);
     }
 
-
-    function registerGovtAuthority(
-        string memory govtId,
-        string memory name,
-        string memory email
-    ) public {
+    function registerGovtAuthority(string memory govtId, string memory name, string memory email) public {
         require(govtAuthorities[msg.sender].accountAddress == address(0), "Authority already registered");
         govtAuthorities[msg.sender] = GovtAuthority( msg.sender, govtId, name, email);
         emit GovtAuthorityRegistered(msg.sender);
@@ -100,19 +90,13 @@ contract LandRegistry is ReentrancyGuard {
         users[userId].isUserVerified = true;
     }
 
-    function registerLand(
-        string memory landDetails, 
-        uint256 area,
-        string memory landAddress,
-        uint256 landPrice
-    ) public onlyVerifiedUser {
+    function registerLand(string memory landDetails, uint256 area, string memory landAddress, uint256 landPrice) public onlyVerifiedUser {
         _landIdCounter++;
         uint256 newLandId = _landIdCounter;
         lands[newLandId] = Land(newLandId, landDetails, area, landAddress, landPrice, false, msg.sender, false);
         _registeredLandIds.push(newLandId); // Add land ID to the array
         emit LandRegistered(newLandId, msg.sender);
     }
-
 
     function listLandForSale(uint256 landId, uint256 price) public onlyLandOwner(landId) {
         require(lands[landId].isLandVerified, "Land must be verified by government");
@@ -125,111 +109,40 @@ contract LandRegistry is ReentrancyGuard {
         lands[landId].isLandVerified = true;
     }
 
-    function getLandDetails(uint256 landId) public view returns (
-        string memory landDetails,
-        uint256 area,
-        string memory landAddress,
-        uint256 landPrice,
-        uint256 ownerId,
-        bool isLandVerified
-    ) {
+    function getLandDetails(uint256 landId) public view returns ( string memory landDetails, uint256 area, string memory landAddress, uint256 landPrice, uint256 ownerId, bool isLandVerified) {
         require(msg.sender == govtAuthorities[msg.sender].accountAddress || msg.sender == lands[landId].ownerAddress,
             "Caller is not authorized to view land details");
         uint256 userId = userAddressToId[lands[landId].ownerAddress];
-        return (
-            lands[landId].landDetails,
-            lands[landId].area,
-            lands[landId].landAddress,
-            lands[landId].landPrice,
-            userId, 
-            lands[landId].isLandVerified
-        );
+        return (lands[landId].landDetails, lands[landId].area, lands[landId].landAddress, lands[landId].landPrice, userId, lands[landId].isLandVerified);
     }
 
-    function getUserDetails(uint256 userId) public view onlyGovtAuthority returns (
-        uint256 id,
-        string memory name,
-        string memory details,
-        string memory phoneNumber,
-        string memory email,
-        address accountAddress,
-        bool isUserVerified
-    ) {
-        return (
-            users[userId].id,
-            users[userId].name,
-            users[userId].details,
-            users[userId].phoneNumber,
-            users[userId].email,
-            users[userId].accountAddress,
-            users[userId].isUserVerified
-        );
+    function getUserDetails(uint256 userId) public view onlyGovtAuthority returns (uint256 id, string memory name, string memory details, string memory phoneNumber, string memory email, address accountAddress, bool isUserVerified) {
+        return (users[userId].id, users[userId].name, users[userId].details, users[userId].phoneNumber, users[userId].email, users[userId].accountAddress, users[userId].isUserVerified);
     }
     
-    function getMyDetails() public view returns (
-        uint256 id,
-        string memory name,
-        string memory details,
-        string memory phoneNumber,
-        string memory email,
-        address accountAddress,
-        bool isUserVerified
-    ) {
+    function getMyDetails() public view returns (uint256 id, string memory name, string memory details, string memory phoneNumber, string memory email, address accountAddress, bool isUserVerified) {
         uint256 userId = userAddressToId[msg.sender];
         require(userId != 0, "User not found");
         User memory user = users[userId];
-        return (
-            user.id,
-            user.name,
-            user.details,
-            user.phoneNumber,
-            user.email,
-            user.accountAddress,
-            user.isUserVerified
-        );
+        return (user.id, user.name, user.details, user.phoneNumber, user.email, user.accountAddress, user.isUserVerified);
     }
 
     function getLandIds() public view onlyVerifiedUser returns (uint256[] memory) {
         return _registeredLandIds;
     }
 
-    function getLandDetailsUser(uint256 landId) public view onlyVerifiedUser returns (
-        uint256 area,
-        string memory landAddress,
-        uint256 landPrice,
-        string memory ownerName,
-        string memory ownerPhoneNumber,
-        string memory ownerEmail
-    ) {
+    function getLandDetailsUser(uint256 landId) public view onlyVerifiedUser returns (uint256 area, string memory landAddress, uint256 landPrice, string memory ownerName, string memory ownerPhoneNumber, string memory ownerEmail) {
         address landOwner = lands[landId].ownerAddress;
         User memory owner = users[userAddressToId[landOwner]];
-        return (
-            lands[landId].area,
-            lands[landId].landAddress,
-            lands[landId].landPrice,
-            owner.name,
-            owner.phoneNumber,
-            owner.email
-        );
+        return (lands[landId].area, lands[landId].landAddress, lands[landId].landPrice, owner.name, owner.phoneNumber, owner.email);
     }
 
-    function getBuyerDetails(uint256 landId) public view onlyLandOwner(landId) returns (
-        address accountAddress,
-        string memory name,
-        string memory phoneNumber,
-        string memory email
-    ) {
+    function getBuyerDetails(uint256 landId) public view onlyLandOwner(landId) returns (address accountAddress, string memory name, string memory phoneNumber, string memory email) {
         address buyer = landToBuyer[landId];
         require(buyer != address(0), "No buyer for this land");
         uint256 buyerId = userAddressToId[buyer];
-        return (
-            users[buyerId].accountAddress,
-            users[buyerId].name,
-            users[buyerId].phoneNumber,
-            users[buyerId].email
-        );
+        return (users[buyerId].accountAddress, users[buyerId].name, users[buyerId].phoneNumber, users[buyerId].email);
     }
-
 
     function getRegisteredUserIds() public view onlyGovtAuthority returns (uint256[] memory) {
         return _registeredUserIds;
@@ -253,13 +166,7 @@ contract LandRegistry is ReentrancyGuard {
         emit SaleApprovedByOwner(_latestSaleTokenId, landId, landToBuyer[landId], proofUrl);
     }
 
-   function getSaleDetailsForApproval(uint256 landId) public view onlyGovtAuthority returns (
-        address ownerAddress,
-        uint256 ownerId,
-        address buyer,
-        uint256 buyerId,
-        string memory proofUrl
-    ) {
+   function getSaleDetailsForApproval(uint256 landId) public view onlyGovtAuthority returns (address ownerAddress, uint256 ownerId, address buyer, uint256 buyerId, string memory proofUrl) {
         require(bytes(landTransactionProofs[landId]).length > 0, "Sale not approved by owner");
         ownerAddress = lands[landId].ownerAddress;
         ownerId = users[userAddressToId[ownerAddress]].id;
